@@ -38,12 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # CORS
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
 
     'permission',
     'rest_framework',
-    'rest_framework.authtoken'
+    # 'rest_framework.authtoken'
     'core',
     'graph_constructor',
     'task',
