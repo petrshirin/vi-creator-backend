@@ -35,6 +35,7 @@ class Role(models.Model):
 
 class User(AbstractUser):
     roles = models.ManyToManyField('Role', verbose_name=l_('Роли'), blank=True, related_name='users')
+    birth_date = models.DateField(verbose_name=l_('Дата рождения'), blank=True, null=True)
 
     class Meta:
         verbose_name = l_('Пользователь')
