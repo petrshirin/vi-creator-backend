@@ -1,5 +1,6 @@
 import logging
 from permission.logics import PermissionLogic
+from rest_framework.permissions import BasePermission
 
 logger = logging.getLogger(__name__)
 
@@ -25,3 +26,22 @@ class BasePermissionLogic(PermissionLogic):
             return False
 
         return _has_perm
+
+
+class IsNotAuthenticated(BasePermission):
+    """
+    Allows access only to authenticated users.
+    """
+
+    def has_permission(self, request, view):
+        return not bool(request.user and request.user.is_authenticated)
+
+
+class IsTeacher(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.teacher)
+
+
+class IsStudent(BasePermission):
+    def has_permission(self, request, view):
+        return bool(request.user and request.user.student)

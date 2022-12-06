@@ -46,6 +46,21 @@ class User(AbstractUser):
             return f'{self.first_name} {self.last_name}'
         return self.username
 
+    def get_my_teacher(self):
+        return Teacher.objects.filter(student_group__pk__in=self.pk).first()
+
+    def is_teacher(self):
+        try:
+            return bool(self.teacher)
+        except:
+            return False
+
+    def is_student(self):
+        try:
+            return not bool(self.teacher)
+        except:
+            return True
+
 
 class Teacher(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='teacher',

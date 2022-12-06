@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from celery.schedules import crontab
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -37,16 +39,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # CORS
-    # 'corsheaders.middleware.CorsMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
-
     'permission',
     'rest_framework',
-    # 'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    "django_celery_results",
+    "django_celery_beat",
     'core',
     'graph_constructor',
     'task',
+    'code_executor',
 ]
 
 MIDDLEWARE = [
@@ -57,6 +58,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # CORS
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'vi_creator_backend.urls'
@@ -120,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-ru'
 
 TIME_ZONE = 'UTC'
 
@@ -147,3 +151,25 @@ if not DEBUG:
         'http://localhost:3000',
     )
 
+
+# EXECUTOR SETTINGS
+EXECUTE_DEFAULT_TIME = 60 * 60 * 60
+
+EXECUTOR_BASE_URL = 'http://localhost:5000'
+EXECUTOR_AUTH_KEY = 'MDpdS89tLHHpezV2jghwPobHwrKASURF'
+
+
+# CELERY
+BROKER_URL = 'redis://vi-creator-redis:6379/1'
+CELERY_RESULT_BACKEND = 'redis://vi-creator-redis:6379/1'
+CELERY_BROKER_URL = 'redis://vi-creator-redis:6379/1'
+
+"""
+crontab - для запуска через cron
+float - запуск каждые n секунд
+"""
+CELERY_BEAT_SCHEDULE = {
+    "code_executor": {
+        "get_containers_logs": {"schedule": 30.0},
+    },
+}

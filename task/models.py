@@ -1,6 +1,7 @@
 from django.db import models
 from core.models import Teacher, User
 from django.utils.translation import gettext_lazy as l_, gettext as _
+from .managers import TaskManager
 
 
 class Task(models.Model):
@@ -12,8 +13,17 @@ class Task(models.Model):
         (MANUAL, _('Ручная проверка')),
         (SIMPLE_ANSWER, _('Простой ответ')),
     )
+    DRAFT = 1
+    ACTIVE = 2
+    CLOSED = 3
+    STATUSES = (
+        (DRAFT, _('Черновик')),
+        (ACTIVE, _('Активно')),
+        (CLOSED, _('Закрыто')),
+    )
 
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name=l_('Учитель'))
+    status = models.IntegerField(verbose_name=l_('Статус задания'), default=DRAFT, choices=STATUSES)
     name = models.CharField(max_length=255, verbose_name=l_('Название'))
     description = models.TextField(verbose_name=l_('Описание'))
     type = models.PositiveSmallIntegerField(verbose_name=l_('Тип задания'), default=SIMPLE_ANSWER, choices=TYPES)
@@ -24,6 +34,8 @@ class Task(models.Model):
                                      null=True, blank=True, verbose_name=l_('Проверочный граф'))
     max_mark = models.FloatField(verbose_name=l_('Оценка за задание'))
 
+    objects = TaskManager()
+
     class Meta:
         verbose_name = l_('Задание')
         verbose_name_plural = l_('Задания')
@@ -33,12 +45,10 @@ class Task(models.Model):
 
 
 class UserAnswer(models.Model):
-    NONE = 0
     ON_CHECKING = 1
     COMPLETED = 2
 
     STATUSES = (
-        (NONE, _('Нет ответа')),
         (ON_CHECKING, _('На проверке')),
         (COMPLETED, _('Завершено')),
     )
@@ -49,7 +59,7 @@ class UserAnswer(models.Model):
     answer_graph = models.ForeignKey('graph_constructor.UserGraphConstructor',  on_delete=models.SET_NULL,
                                      null=True, blank=True, verbose_name=l_('ответ в виде графа'))
     mark = models.FloatField(verbose_name=l_('Оценка'), null=True, blank=True, default=None)
-    status = models.PositiveSmallIntegerField(verbose_name=l_('Статус ответа'), choices=STATUSES, default=NONE)
+    status = models.PositiveSmallIntegerField(verbose_name=l_('Статус ответа'), choices=STATUSES, default=ON_CHECKING)
 
     class Meta:
         verbose_name = l_('Ответ пользователя')

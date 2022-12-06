@@ -9,7 +9,6 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-
         # Создаем роль обычного пользователя
         role_user_student, created = Role.objects.get_or_create(name='Ученик', slug='student', defaults={'rank': 0})
         role_user_teacher, created = Role.objects.get_or_create(name='Учитель', slug='teacher', defaults={'rank': 0})

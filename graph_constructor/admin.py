@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import GraphSettings, UserGraphConstructor, UserEmotion
 
-# Register your models here.
+admin.site.register(GraphSettings)
+admin.site.register(UserGraphConstructor)
+admin.site.register(UserEmotion)

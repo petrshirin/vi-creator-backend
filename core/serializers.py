@@ -41,3 +41,20 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    is_teacher = serializers.SerializerMethodField()
+    is_student = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'first_name', 'last_name', 'birth_date', 'is_teacher', 'is_student')
+
+    @staticmethod
+    def get_is_teacher(obj):
+        return obj.is_teacher()
+
+    @staticmethod
+    def get_is_student(obj):
+        return obj.is_student()
